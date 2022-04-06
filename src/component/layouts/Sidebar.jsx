@@ -6,38 +6,45 @@ import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-
+import { pages } from './List'
 import { MdMenu, MdMail, MdForwardToInbox } from 'react-icons/md'
 
 import Toolbar from '@mui/material/Toolbar'
 
-const drawer = (
-  <div>
-    <Toolbar />
-    <Divider />
-    <List>
-      {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-        <ListItem button key={text}>
-          <ListItemIcon>
-            {index % 2 === 0 ? <MdForwardToInbox /> : <MdMail />}
-          </ListItemIcon>
-          <ListItemText primary={text} />
-        </ListItem>
-      ))}
-    </List>
-    <Divider />
-    <List>
-      {['All mail', 'Trash', 'Spam'].map((text, index) => (
-        <ListItem button key={text}>
-          <ListItemIcon>
-            {index % 2 === 0 ? <MdForwardToInbox /> : <MdMail />}
-          </ListItemIcon>
-          <ListItemText primary={text} />
-        </ListItem>
-      ))}
-    </List>
-  </div>
-)
+const DrawList = ({ role }) => {
+  return (
+    <div>
+      <Toolbar />
+      <Divider />
+      <List>
+        {pages
+          .filter((item) => item.type === 'SERVICE')
+          .filter((item) => (role === 'admin' ? item : item.role === 'user'))
+
+          // .filter((item, index) => index < 2)
+
+          // .filter((item, index) => item.role === 'user' && index !== 3)
+          .map((item, index) => (
+            <ListItem button key={index}>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.name} />
+            </ListItem>
+          ))}
+      </List>
+      <Divider />
+      <List>
+        {pages
+          .filter((item) => item.type === 'OTHER')
+          .map((item, index) => (
+            <ListItem button key={index}>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.name} />
+            </ListItem>
+          ))}
+      </List>
+    </div>
+  )
+}
 
 function SideBar({ handleDrawerToggle, mobileOpen, window, drawerWidth }) {
   const container =
@@ -66,7 +73,7 @@ function SideBar({ handleDrawerToggle, mobileOpen, window, drawerWidth }) {
           },
         }}
       >
-        {drawer}
+        <DrawList role="admin" />
       </Drawer>
       <Drawer
         variant="permanent"
@@ -79,7 +86,7 @@ function SideBar({ handleDrawerToggle, mobileOpen, window, drawerWidth }) {
         }}
         open
       >
-        {drawer}
+        <DrawList role="admin" />
       </Drawer>
     </Box>
   )
